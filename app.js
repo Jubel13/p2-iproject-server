@@ -7,11 +7,18 @@ const axios = require("axios");
 const CryptoJS = require("./hmac-md5");
 const enc = require("./enc-base64-min");
 const language = "en-gb";
+const mapboxAccessToken =
+  "pk.eyJ1IjoianViZWwxMyIsImEiOiJja3ZnaXh3M2RhczNvMm90OTgxNGR5b3F5In0.6phtX2O6phL7cJPoLZvLqw";
+const geopifyAPI = "36affa5a75494ec59e9002027a43ce4d";
 enc();
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
+
+//? Variabel for longitude and latitude
+let longitude;
+let latitude;
 
 //Get all symptoms
 app.post("/symptoms", (req, res, next) => {
@@ -71,6 +78,42 @@ app.post("/diagnosis", (req, res, next) => {
     });
 });
 
+//get longitude and latitude
+app.post("/coordinate", (req, res, next) => {
+  const { location } = req.body;
+  let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${location}.json?access_token=${mapboxAccessToken}&limit=1`;
+
+  axios
+    .get(url)
+    .then((resp) => {
+      longitude = resp.data.features[0].center[0];
+      latitude = resp.data.features[0].center[1];
+      console.log(longitude, latitude);
+      res.status(200).json(resp.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+// Get nearby hospital
+app.post("/nearby", (req, res, next) => {
+  let { radius, categories } = req.body;
+  let limit = 20;
+  let url = `https://api.geoapify.com/v2/places?categories=${categories}&filter=circle:${longitude},${latitude},${radius}&limit=${limit}&apiKey=${geopifyAPI}`;
+  axios
+    .get(url)
+    .then((resp) => {
+      console.log(resp.data);
+      res.status(200).json(resp.data);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    });
+});
+
 app.listen(port, () => {
   console.log("Server runs on port", port);
 });
+
