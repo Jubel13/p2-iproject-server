@@ -20,6 +20,9 @@ app.use(cors());
 let longitude;
 let latitude;
 
+//? Token for API Medic
+let token;
+
 //Get all symptoms
 app.post("/symptoms", (req, res, next) => {
   const { token } = req.body;
@@ -51,7 +54,8 @@ app.post("/loginToken", (req, res, next) => {
   axios
     .post(uri, {}, config)
     .then((resp) => {
-      console.log(resp);
+      token = resp.data.Token;
+      console.log(token);
       res.status(200).json(resp.data);
     })
     .catch((err) => {
@@ -62,7 +66,7 @@ app.post("/loginToken", (req, res, next) => {
 
 //get diagnosis
 app.post("/diagnosis", (req, res, next) => {
-  let { symptoms, gender, yearOfBirth, token } = req.body;
+  const { symptoms, gender, yearOfBirth } = req.body;
   // let symptoms = [10, 17];
   // let gender = "male";
   // let yearOfBirth = 1992;
@@ -116,4 +120,3 @@ app.post("/nearby", (req, res, next) => {
 app.listen(port, () => {
   console.log("Server runs on port", port);
 });
-
