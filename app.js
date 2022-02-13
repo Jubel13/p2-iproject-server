@@ -7,9 +7,9 @@ const axios = require("axios");
 const CryptoJS = require("./hmac-md5");
 const enc = require("./enc-base64-min");
 const language = "en-gb";
-const mapboxAccessToken =
-  "pk.eyJ1IjoianViZWwxMyIsImEiOiJja3ZnaXh3M2RhczNvMm90OTgxNGR5b3F5In0.6phtX2O6phL7cJPoLZvLqw";
-const geopifyAPI = "36affa5a75494ec59e9002027a43ce4d";
+const mapboxAccessToken = process.env.MAPBOXTOKEN;
+const geopifyAPI = process.env.GEOPIFYAPI
+const secret_key
 enc();
 
 app.use(express.urlencoded({ extended: false }));
@@ -41,7 +41,7 @@ app.post("/symptoms", (req, res, next) => {
 //get token
 app.post("/loginToken", (req, res, next) => {
   var uri = "https://sandbox-authservice.priaid.ch/login";
-  var secret_key = "Rs35Lba2M8Kkw4Z7W";
+  var secret_key = process.env.API_MEDIC_SECRET_KEY
   var computedHash = CryptoJS.HmacMD5(uri, secret_key);
   var computedHashString = computedHash.toString(CryptoJS.enc.Base64);
 
