@@ -9,6 +9,7 @@ const enc = require("./enc-base64-min");
 const language = "en-gb";
 const mapboxAccessToken = process.env.MAPBOXTOKEN;
 const geopifyAPI = process.env.GEOPIFYAPI;
+let apiMedicSecretKey = "Rs35Lba2M8Kkw4Z7W";
 enc();
 
 app.use(express.urlencoded({ extended: false }));
@@ -22,33 +23,32 @@ let latitude;
 //? Token for API Medic
 let token;
 
-//Get all symptoms
-app.post("/symptoms", (req, res, next) => {
-  const { token } = req.body;
-  let url = `https://sandbox-healthservice.priaid.ch/symptoms?token=${token}&language=${language}`;
-  axios
-    .get(url)
-    .then((resp) => {
-      res.status(200).json(resp.data);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send(err);
-    });
-});
-
-//get token
+//* Get token
 app.post("/loginToken", (req, res, next) => {
+  //! Sandbox, dummy data
   var uri = "https://sandbox-authservice.priaid.ch/login";
-  var secret_key = process.env.API_MEDIC_SECRET_KEY;
+  var secret_key = apiMedicSecretKey;
+
+  //? Real data
+  // var uri = "https://authservice.priaid.ch/login";
+  // var secret_key = process.env.API_MEDIC_SECRET_KEY;
+
   var computedHash = CryptoJS.HmacMD5(uri, secret_key);
   var computedHashString = computedHash.toString(CryptoJS.enc.Base64);
 
+  //! Dummy data
   const config = {
     headers: {
       Authorization: `Bearer jubelsinaga13@gmail.com:${computedHashString}`,
     },
   };
+
+  //? Real data
+  // const config = {
+  //   headers: {
+  //     Authorization: `Bearer ${process.env.API_MEDIC_USER}:${computedHashString}`,
+  //   },
+  // };
 
   axios
     .post(uri, {}, config)
@@ -63,13 +63,16 @@ app.post("/loginToken", (req, res, next) => {
     });
 });
 
-//get diagnosis
-app.post("/diagnosis", (req, res, next) => {
-  const { symptoms, gender, yearOfBirth } = req.body;
-  // let symptoms = [10, 17];
-  // let gender = "male";
-  // let yearOfBirth = 1992;
-  let url = `https://sandbox-healthservice.priaid.ch/diagnosis?symptoms=${symptoms}&gender=${gender}&year_of_birth=${yearOfBirth}&token=${token}&language=${language}`;
+//* Get all symptoms
+app.post("/symptoms", (req, res, next) => {
+  // const { token } = req.body;
+
+  //!Dummy url
+  let url = `https://sandbox-healthservice.priaid.ch/symptoms?token=${token}&language=${language}`;
+
+  //? Real url
+  // let url = `	https://healthservice.priaid.ch/symptoms?token=${token}&language=${language}`;
+
   axios
     .get(url)
     .then((resp) => {
@@ -81,7 +84,79 @@ app.post("/diagnosis", (req, res, next) => {
     });
 });
 
-//get longitude and latitude
+//* Get symptoms from json
+app.get("/symptoms", (req, res, next) => {
+  let data = require("./data/symptoms.json");
+  res.status(200).json(data);
+});
+
+//* get diagnosis
+app.post("/diagnosis", (req, res, next) => {
+  //* get token
+  //! Sandbox, dummy data
+  var uri = "https://sandbox-authservice.priaid.ch/login";
+  var secret_key = apiMedicSecretKey;
+
+  //? Real data
+  // var uri = "https://authservice.priaid.ch/login";
+  // var secret_key = process.env.API_MEDIC_SECRET_KEY;
+
+  var computedHash = CryptoJS.HmacMD5(uri, secret_key);
+  var computedHashString = computedHash.toString(CryptoJS.enc.Base64);
+
+  //! Dummy data
+  const config = {
+    headers: {
+      Authorization: `Bearer jubelsinaga13@gmail.com:${computedHashString}`,
+    },
+  };
+
+  //? Real data
+  // const config = {
+  //   headers: {
+  //     Authorization: `Bearer ${process.env.API_MEDIC_USER}:${computedHashString}`,
+  //   },
+  // };
+
+  axios
+    .post(uri, {}, config)
+    .then((resp) => {
+      token = resp.data.Token;
+      //* Get diagnose
+      const { symptoms, gender, yearOfBirth } = req.body;
+      // let symptoms = [10, 17];
+      // let gender = "male";
+      // let yearOfBirth = 1992;
+      let url = `https://sandbox-healthservice.priaid.ch/diagnosis?symptoms=${symptoms}&gender=${gender}&year_of_birth=${yearOfBirth}&token=${token}&language=${language}`;
+
+      return axios.get(url);
+    })
+    .then((resp) => {
+      res.status(200).json(resp.data);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    });
+
+  //* Get diagnose
+  // const { symptoms, gender, yearOfBirth } = req.body;
+  // // let symptoms = [10, 17];
+  // // let gender = "male";
+  // // let yearOfBirth = 1992;
+  // let url = `https://sandbox-healthservice.priaid.ch/diagnosis?symptoms=${symptoms}&gender=${gender}&year_of_birth=${yearOfBirth}&token=${token}&language=${language}`;
+  // axios
+  //   .get(url)
+  //   .then((resp) => {
+  //     res.status(200).json(resp.data);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //     res.send(err);
+  //   });
+});
+
+//* get longitude and latitude
 app.post("/coordinate", (req, res, next) => {
   const { location } = req.body;
   let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${location}.json?access_token=${mapboxAccessToken}&limit=1`;
@@ -99,9 +174,10 @@ app.post("/coordinate", (req, res, next) => {
     });
 });
 
-// Get nearby hospital
+//* Get nearby hospital
 app.post("/nearby", (req, res, next) => {
-  let { radius, categories } = req.body;
+  let { radius } = req.body;
+  let categories = "healthcare.hospital";
   let limit = 20;
   let url = `https://api.geoapify.com/v2/places?categories=${categories}&filter=circle:${longitude},${latitude},${radius}&limit=${limit}&apiKey=${geopifyAPI}`;
   axios
