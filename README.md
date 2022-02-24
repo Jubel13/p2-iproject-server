@@ -7,7 +7,7 @@ Individual Project - Server
 
 This is server app for DiagnosTool application. Click [client](https://github.com/Jubel13/p2-iproject-client) to view the client.
 
-*Note: API and packages are similar, they are used to use some functions, ref: [api](https://rapidapi.com/blog/api-vs-library/)
+*Note: API and packages are similar, they are used to use some functions, ref: [api](https://rapidapi.com/blog/api-vs-library/)*
 
 This app use these APIs:
 - [API - Medic](https://apimedic.com/)
