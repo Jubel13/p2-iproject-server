@@ -86,7 +86,12 @@ app.post("/symptoms", (req, res, next) => {
 
 //* Get symptoms from json
 app.get("/symptoms", (req, res, next) => {
-  let data = require("./data/symptoms.json");
+  //* Real data
+  // let data = require("./data/symptoms.json");
+
+  //! Dummy data
+  let data = require("./data/dummySymptoms.json");
+
   res.status(200).json(data);
 });
 
@@ -124,9 +129,7 @@ app.post("/diagnosis", (req, res, next) => {
       token = resp.data.Token;
       //* Get diagnose
       const { symptoms, gender, yearOfBirth } = req.body;
-      // let symptoms = [10, 17];
-      // let gender = "male";
-      // let yearOfBirth = 1992;
+
       let url = `https://sandbox-healthservice.priaid.ch/diagnosis?symptoms=${symptoms}&gender=${gender}&year_of_birth=${yearOfBirth}&token=${token}&language=${language}`;
 
       return axios.get(url);
@@ -141,9 +144,7 @@ app.post("/diagnosis", (req, res, next) => {
 
   //* Get diagnose
   // const { symptoms, gender, yearOfBirth } = req.body;
-  // // let symptoms = [10, 17];
-  // // let gender = "male";
-  // // let yearOfBirth = 1992;
+
   // let url = `https://sandbox-healthservice.priaid.ch/diagnosis?symptoms=${symptoms}&gender=${gender}&year_of_birth=${yearOfBirth}&token=${token}&language=${language}`;
   // axios
   //   .get(url)
