@@ -35,4 +35,4 @@ To preview this app, go to: https://individual-project-hacktiv8.web.app/
 
 Detail of the endpoint used in this app can be found in `api-doc.md` file.
 
-*Note: You need to switch the code in `app.js` to use dummy data from api-medic, if diagnose feature not working on the [client](https://github.com/Jubel13/p2-iproject-client). API calss from api-medic is limited to 100 calls / month for free user.*
+*Note: You need to switch the code in `app.js` to use dummy data from api-medic, if diagnose feature not working on the [client](https://github.com/Jubel13/p2-iproject-client). API calls from api-medic is limited to 100 calls / month for free user.*
