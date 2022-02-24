@@ -5,7 +5,7 @@ Individual Project - Server
 
 ### Project Description
 
-This is server app for DiagnosTool aplication. Click [client](https://github.com/Jubel13/p2-iproject-client) to view the client.
+This is server app for DiagnosTool application. Click [client](https://github.com/Jubel13/p2-iproject-client) to view the client.
 
 *Note: API and packages are similar, they are used to use some functions, ref: [api](https://rapidapi.com/blog/api-vs-library/)
 
@@ -32,5 +32,7 @@ Packages/library that is used in this app:
 To install those packages, run `npm install` on terminal
 
 To preview this app, go to: https://individual-project-hacktiv8.web.app/
+
+Detail of the endpoint used in this app can be found in `api-doc.md` file.
 
 *Note: You need to switch the code in `app.js` to use dummy data from api-medic, if diagnose feature not working on the [client](https://github.com/Jubel13/p2-iproject-client). API calss from api-medic is limited to 100 calls / month for free user.*
